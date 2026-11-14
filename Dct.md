@@ -4,13 +4,17 @@
 
 ## 1\. Introducción
 
+
+
 En el análisis de señales y el procesamiento digital de imágenes, las transformadas lineales cumplen el propósito fundamental de reducir la complejidad de un problema al proyectar los datos hacia un dominio alternativo donde sus
 
 componentes fundamentales resultan más fáciles de manipular. Si bien es frecuente asumir que la Transformada Discreta del Coseno (DCT) es simplemente una aproximación discreta de la Transformada Coseno de Fourier continua (FCT), dicha interpretación es matemáticamente imprecisa. Como demostró Gilbert Strang, la familia completa de transformadas trigonométricas discretas (DCT y DST) emerge de manera natural como las soluciones propias de un sistema físico discretizado: el oscilador armónico simple sometido a distintas combinaciones de condiciones de frontera homogéneas.   El presente informe desarrolla formalmente el origen diferencial y matricial de la DCT Tipo II (DCT-II), establece sus diferencias estructurales frente a otras transformadas ortogonales, demuestra su propiedad de ortonormalidad y expone las factorizaciones de matrices dispersas que permiten su cálculo rápido en bloques bidimensionales de $8 \\times 8$ para la compresión digital
 
+
+
 ## 2\. Origen Fisico-Mátematico
 
-**Del oscilador Armónico a la Matriz A2.**
+#### **2.1 Del oscilador Armónico a la Matriz $A\_2$**
 
 Para deducir la DCT-II desde primeros principios, se parte del problema continuo de autovalores asociado al oscilador armónico simple no amortiguado en el dominio espacial $x \\in \[0, \\pi]$:
 
@@ -56,19 +60,19 @@ La elección de la DCT-II frente a otras transformadas lineales se fundamenta en
 
 
 
-1. Frente a la Transformada Discreta de Fourier (DFT): La DFT asume que una señal finita se repite de manera periódica circular. Si los valores inicial y final de un bloque de datos difieren, la extensión circular introduce un salto discontinuo artificial en los bordes, dispersando energía hacia frecuencias altas (fenómeno de Gibbs). Por el contrario, la extensión simétrica en punto medio (HSHS) de la DCT-II garantiza continuidad en los bordes del bloque, concentrando la energía en unos pocos coeficientes de baja frecuencia. 
+1. **Frente a la Transformada Discreta de Fourier (DFT):** La DFT asume que una señal finita se repite de manera periódica circular. Si los valores inicial y final de un bloque de datos difieren, la extensión circular introduce un salto discontinuo artificial en los bordes, dispersando energía hacia frecuencias altas (fenómeno de Gibbs). Por el contrario, la extensión simétrica en punto medio (HSHS) de la DCT-II garantiza continuidad en los bordes del bloque, concentrando la energía en unos pocos coeficientes de baja frecuencia. 
 
-2. Frente a las demás variantes de la familia DCT/DST: Mientras la DCT-I impone simetría de Neumann directamente sobre las muestras extremas (WSWS), las variantes DCT-III y DCT-IV reemplazan la condición del extremo derecho por una condición de Dirichlet ($u(\\pi)=0$, antisimetría). Por su parte, la familia de Transformadas Discretas del Seno (DST-I a DST-VIII) sustituye la condición de Neumann en el origen por una condición de Dirichlet. 
+2. **Frente a las demás variantes de la familia DCT/DST:** Mientras la DCT-I impone simetría de Neumann directamente sobre las muestras extremas (WSWS), las variantes DCT-III y DCT-IV reemplazan la condición del extremo derecho por una condición de Dirichlet ($u(\\pi)=0$, antisimetría). Por su parte, la familia de Transformadas Discretas del Seno (DST-I a DST-VIII) sustituye la condición de Neumann en el origen por una condición de Dirichlet. 
 
-3. Frente a transformadas de funciones cuadradas (Walsh-Hadamard y Haar): A diferencia de la Transformada de Walsh-Hadamard (WHT) o la de Haar —cuyas funciones base son pulsos escalonados binarios compuestos únicamente por valores $\\{+1, -1, 0\\}$ provenientes del álgebra combinatoria y el análisis multirresolución—, la DCT-II utiliza funciones base sinusoidales suaves. Esto le permite aproximar señales naturales continuas con un error cuadrático medio significativamente menor.  
+3. **Frente a transformadas de funciones cuadradas (Walsh-Hadamard y Haar):** A diferencia de la Transformada de Walsh-Hadamard (WHT) o la de Haar —cuyas funciones base son pulsos escalonados binarios compuestos únicamente por valores $\\{+1, -1, 0\\}$ provenientes del álgebra combinatoria y el análisis multirresolución—, la DCT-II utiliza funciones base sinusoidales suaves. Esto le permite aproximar señales naturales continuas con un error cuadrático medio significativamente menor.  
 
-4. Aproximación óptima a la Transformada de Karhunen-Loéve (KLT): Aunque la KLT es teóricamente óptima para descorrelacionar cualquier señal estadística, su matriz de transformación depende de la covarianza de cada imagen y carece de algoritmos rápidos. La DCT-II utiliza una base fija independiente de los datos que converge asintóticamente a la KLT para procesos estocásticos de Markov de primer orden (modelo estándar de las imágenes naturales), logrando una compactación de energía casi idéntica.   
+4. **Aproximación óptima a la Transformada de Karhunen-Loéve (KLT):** Aunque la KLT es teóricamente óptima para descorrelacionar cualquier señal estadística, su matriz de transformación depende de la covarianza de cada imagen y carece de algoritmos rápidos. La DCT-II utiliza una base fija independiente de los datos que converge asintóticamente a la KLT para procesos estocásticos de Markov de primer orden (modelo estándar de las imágenes naturales), logrando una compactación de energía casi idéntica.   
 
 
 
 ## 4\. Definición matricial y ortonormalidad
 
-Para garantizar que la transformación conserve la energía de la señal (Teorema de Parseval) y sea fácilmente invertible, los autovectores $\\vec{u}\_k$ de la matriz $A\_2$ deben normalizarse. De este modo, los elementos $(k, n)$ de la matriz ortonormal de la DCT-II de orden $N$, denotada como $C\_N^{II}$, se definen como:
+Para garantizar que la transformación conserve la energía de la señal (**Teorema de Parseval**) y sea fácilmente invertible, los autovectores $\\vec{u}\_k$ de la matriz $A\_2$ deben normalizarse. De este modo, los elementos $(k, n)$ de la matriz ortonormal de la DCT-II de orden $N$, denotada como $C\_N^{II}$, se definen como:
 
 
 
@@ -88,7 +92,7 @@ Para demostrar que $C\_N^{II}$ es una matriz ortogonal (unitaria real), debe pro
 
 
 
-1\. Ortogonalidad ($k \\neq m$):
+**1. Ortogonalidad ($k \\neq m$):**
 
 De acuerdo con la deducción de la Sección 2, las filas no escaladas de $C\_N^{II}$ son los autovectores de la matriz $A\_2$. Dado que $A\_2$ es una matriz real y simétrica ($A\_2 = A\_2^T$), el Teorema Espectral del álgebra lineal garantiza que los autovectores correspondientes a autovalores distintos ($\\lambda\_k \\neq \\lambda\_m$ para $k \\neq m$) son mutuamente ortogonales:
 
@@ -98,7 +102,7 @@ De acuerdo con la deducción de la Sección 2, las filas no escaladas de $C\_N^{
 
 
 
-2\. Normalización ($k = m$):
+**2. Normalización ($k = m$):**
 
 Evaluando la norma al cuadrado de cada fila:
 
@@ -150,13 +154,13 @@ Esta propiedad indica que las filas de índice par ($2k$) son simétricas respec
 
 
 
-##### **5.1 Factorización Recursiva en Matrices Dispersas**
+#### **5.1 Factorización Recursiva en Matrices Dispersas**
 
 Separando la sumatoria de la DCT-II (omitiendo temporalmente los factores de normalización) en coeficientes pares e impares, y agrupando los términos extremos de la señal de entrada $x\_n$ y $x\_{N-1-n}$, el cálculo de tamaño $N$ se divide en dos subproblemas independientes de tamaño $N/2$:
 
 
 
-Coeficientes de índice par ($2k$):
+**Coeficientes de índice par ($2k$):**
 
 
 
@@ -168,7 +172,7 @@ Esta expresión corresponde exactamente a una DCT-II de longitud $N/2$ aplicada 
 
 
 
-Coeficientes de índice impar ($2k+1$):
+**Coeficientes de índice impar ($2k+1$):**
 
 
 
@@ -196,7 +200,7 @@ donde $I\_{N/2}$ es la matriz identidad, $J\_{N/2}$ es la matriz de reflexión a
 
 
 
-##### **5.2 Otras Estrategias Algorítmicas y Cota Óptima para $N=8$**
+#### **5.2 Otras Estrategias Algorítmicas y Cota Óptima para $N=8$**
 
 
 
@@ -204,9 +208,11 @@ Además de la factorización directa anterior (algoritmo de Chen), el desarrollo
 
 
 
-1. **Algoritmos Split-Radix:** Descomponen la DCT-II de $N$ puntos en una DCT-II de $N/2$, una DCT-II de $N/4$ y una DST-II de $N/4$, minimizando las operaciones redundantes.   
-2. **Cálculo vía Transformada de Walsh-Hadamard (WHT):** Dado que la WHT posee la misma estructura de simetría par/impar que la DCT-II, se aplica primero la WHT (que solo utiliza sumas y restas con elementos $\\pm 1$) y posteriormente una matriz de conversión dispersa por bloques con rotaciones de plano**.**  
-3. **Cálculo vía DFT Real (FFCT):** Reordena la secuencia de entrada para mapear la DCT-II sobre una Transformada Rápida de Fourier (FFT) real seguida de rotaciones angulares.   
+1. **Algoritmos Split-Radix:** Descomponen la DCT-II de $N$ puntos en una DCT-II de $N/2$, una DCT-II de $N/4$ y una DST-II de $N/4$, minimizando las operaciones redundantes.
+
+2. **Cálculo vía Transformada de Walsh-Hadamard (WHT):** Dado que la WHT posee la misma estructura de simetría par/impar que la DCT-II, se aplica primero la WHT (que solo utiliza sumas y restas con elementos $\\pm 1$) y posteriormente una matriz de conversión dispersa por bloques con rotaciones de plano**.**
+
+3. **Cálculo vía DFT Real (FFCT):** Reordena la secuencia de entrada para mapear la DCT-II sobre una Transformada Rápida de Fourier (FFT) real seguida de rotaciones angulares.
 
 
 
@@ -234,7 +240,7 @@ La elección de bloques de $8 \\times 8$ ($64$ píxeles) responde a un compromis
 
 
 
-##### **6.1 Formulación Matricial y Producto de Kronecker**
+#### **6.1 Formulación Matricial y Producto de Kronecker**
 
 
 
@@ -258,7 +264,7 @@ Mientras el método directo requiere $64 \\times 64 = 4096$ multiplicaciones por
 
 
 
-##### **6.2 Proceso de Comprensión**
+#### **6.2 Proceso de Comprensión**
 
 
 
