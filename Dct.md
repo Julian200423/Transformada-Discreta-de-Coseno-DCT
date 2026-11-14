@@ -46,106 +46,231 @@ Resolviendo este sistema algebraico, se verifica que los autovalores de $A\_2$ e
 
 
 
-A diferencia de la Transformada Discreta de Fourier (DFT), que utiliza senos y cosenos (números complejos),
 
-La DCT emplea únicamente funciones reales basadas en cosenos.
 
-Para un bloque de $N \\times N$ píxeles $f(x,y)$:
+## 3\. Diferencias Estructurales con Otras Transformadas Ortogonales
 
-$$
-F(u,v) = \\alpha(u),\\alpha(v) \\sum\_{x=0}^{N-1} \\sum\_{y=0}^{N-1} f(x,y),
-\\cos!\\left\[\\frac{(2x+1)u\\pi}{2N}\\right]
-\\cos!\\left\[\\frac{(2y+1)v\\pi}{2N}\\right]
-$$
 
-con
 
-$$
-\\alpha(u) =
-\\begin{cases}
-\\sqrt{\\dfrac{1}{N}} \& u = 0 \\\[2mm]
-\\sqrt{\\dfrac{2}{N}} \& u > 0
-\\end{cases}
-$$
+La elección de la DCT-II frente a otras transformadas lineales se fundamenta en cuatro propiedades distintivas:
 
-* $u$: frecuencia horizontal, $v$: frecuencia vertical.
-* $F(0,0)$ es el coeficiente DC (promedio del bloque).
-* Mientras más lejos de $(0,0)$, mayor la frecuencia (detalle fino).
 
-## 2\. Separabilidad
 
-El kernel es el producto de dos cosenos 1D, por lo que la DCT 2D equivale a dos DCT 1D: primero sobre filas y luego sobre columnas. En forma matricial:
+1. Frente a la Transformada Discreta de Fourier (DFT): La DFT asume que una señal finita se repite de manera periódica circular. Si los valores inicial y final de un bloque de datos difieren, la extensión circular introduce un salto discontinuo artificial en los bordes, dispersando energía hacia frecuencias altas (fenómeno de Gibbs). Por el contrario, la extensión simétrica en punto medio (HSHS) de la DCT-II garantiza continuidad en los bordes del bloque, concentrando la energía en unos pocos coeficientes de baja frecuencia. 
 
-$$
-F = C , f , C^{T}, \\qquad f = C^{T} , F , C
-$$
+2. Frente a las demás variantes de la familia DCT/DST: Mientras la DCT-I impone simetría de Neumann directamente sobre las muestras extremas (WSWS), las variantes DCT-III y DCT-IV reemplazan la condición del extremo derecho por una condición de Dirichlet ($u(\\pi)=0$, antisimetría). Por su parte, la familia de Transformadas Discretas del Seno (DST-I a DST-VIII) sustituye la condición de Neumann en el origen por una condición de Dirichlet. 
 
-donde
+3. Frente a transformadas de funciones cuadradas (Walsh-Hadamard y Haar): A diferencia de la Transformada de Walsh-Hadamard (WHT) o la de Haar —cuyas funciones base son pulsos escalonados binarios compuestos únicamente por valores $\\{+1, -1, 0\\}$ provenientes del álgebra combinatoria y el análisis multirresolución—, la DCT-II utiliza funciones base sinusoidales suaves. Esto le permite aproximar señales naturales continuas con un error cuadrático medio significativamente menor.  
 
-$$
-C\_{u,x} = \\alpha(u)\\cos!\\left\[\\frac{(2x+1)u\\pi}{2N}\\right]
-$$
+4. Aproximación óptima a la Transformada de Karhunen-Loéve (KLT): Aunque la KLT es teóricamente óptima para descorrelacionar cualquier señal estadística, su matriz de transformación depende de la covarianza de cada imagen y carece de algoritmos rápidos. La DCT-II utiliza una base fija independiente de los datos que converge asintóticamente a la KLT para procesos estocásticos de Markov de primer orden (modelo estándar de las imágenes naturales), logrando una compactación de energía casi idéntica.   
 
-$C$ es ortogonal ($C C^{T} = I$), por eso la inversa es la transpuesta. El costo baja de $O(N^4)$ a $O(N^3)$ o menos con algoritmos rápidos.
 
-## 3\. Imágenes base
 
-Cada coeficiente $F(u,v)$ pondera una imagen base, producto de un coseno horizontal y uno vertical. Para $8 \\times 8$ hay 64 patrones, y el bloque original es la suma ponderada de ellos:
+## 4\. Definición matricial y ortonormalidad
 
-$$
-f(x,y) = \\sum\_{u=0}^{N-1}\\sum\_{v=0}^{N-1} \\alpha(u)\\alpha(v),F(u,v),
-\\cos!\\left\[\\frac{(2x+1)u\\pi}{2N}\\right]
-\\cos!\\left\[\\frac{(2y+1)v\\pi}{2N}\\right]
-$$
+Para garantizar que la transformación conserve la energía de la señal (Teorema de Parseval) y sea fácilmente invertible, los autovectores $\\vec{u}\_k$ de la matriz $A\_2$ deben normalizarse. De este modo, los elementos $(k, n)$ de la matriz ortonormal de la DCT-II de orden $N$, denotada como $C\_N^{II}$, se definen como:
 
-## 4\. DCT-II
 
-Se utilizan para la implementación eficiente de transformadas ortogonales solapadas y en bancos de filtros modulados en coseno de reconstrucción.  Las transformadas que usamos para comprimir imágenes y audio (como la DCT en el formato JPEG o MP3) no son fórmulas inventadas al azar, sino la versión digital y discreta de las vibraciones naturales de un sistema físico (como una cuerda de guitarra o un sistema de masas y resortes).
 
-$$
+&#x20;            $$\[C\_N^{II}]\_{kn} = \\sqrt{\\frac{2}{N}} \\epsilon\_k \\cos\\left\[\\frac{\\pi(2n+1)k}{2N}\\right], \\quad k, n = 0, 1, \\dots, N-1$$
 
-En física , un oscilador armonico como un pendulo o cuerda se describe mediante una ecución diferencia que relaciona la posición con su segunda derivada:
 
-$$
 
-$\\frac{d^2y}{dx^2} = -\\lambda y$
+donde el factor de normalización $\\epsilon\_k$ está definido por:
 
-$$
 
-Las funciones senos y cosenos son autofunciones. Es decir, son funciones propias donde el sistema no cambia su forma, sino solo su amplitud.  Por ejemplo, si se deriva dos veces a un seno o coseno, obtienes la misma función multiplica por una constante.($-\\lambda$)
 
-$$
-C = \\frac{1}{\\sqrt{2}}
-\\begin{pmatrix} 1 \& 1 \\ 1 \& -1 \\end{pmatrix},
-\\qquad
-f = \\begin{pmatrix} a \& b \\ c \& d \\end{pmatrix}
-$$
+&#x09;	$$\\epsilon\_k = \\begin{cases} \\dfrac{1}{\\sqrt{2}} \& \\text{si } k = 0 \\\\ 1 \& \\text{si } k \\in \\{1, 2, \\dots, N-1\\} \\end{cases}$$
 
-$$
-\\begin{aligned}
-F(0,0) \&= \\tfrac{1}{2}(a + b + c + d) \\
-F(0,1) \&= \\tfrac{1}{2}(a - b + c - d) \\quad \\text{(variación horizontal)} \\
-F(1,0) \&= \\tfrac{1}{2}(a + b - c - d) \\quad \\text{(variación vertical)} \\
-F(1,1) \&= \\tfrac{1}{2}(a - b - c + d) \\quad \\text{(diagonal)}
-\\end{aligned}
-$$
 
-Con
 
-$$
-f = \\begin{pmatrix} 52 \& 55 \\ 61 \& 59 \\end{pmatrix}
-$$
+Para demostrar que $C\_N^{II}$ es una matriz ortogonal (unitaria real), debe probarse que el producto interno entre cualesquiera dos vectores fila $\\vec{\\psi}\_k$ y $\\vec{\\psi}\_m$ satisface $\\langle \\vec{\\psi}\_k, \\vec{\\psi}\_m \\rangle = \\delta\_{km}$.
 
-se obtiene
 
-$$
-F = \\begin{pmatrix} 113.5 \& -0.5 \\ -6.5 \& -2.5 \\end{pmatrix}
-$$
 
-La energía se concentra en $F(0,0)$, lo que se aprovecha para comprimir.
+1\. Ortogonalidad ($k \\neq m$):
 
-## 5\. Aplicaciones
+De acuerdo con la deducción de la Sección 2, las filas no escaladas de $C\_N^{II}$ son los autovectores de la matriz $A\_2$. Dado que $A\_2$ es una matriz real y simétrica ($A\_2 = A\_2^T$), el Teorema Espectral del álgebra lineal garantiza que los autovectores correspondientes a autovalores distintos ($\\lambda\_k \\neq \\lambda\_m$ para $k \\neq m$) son mutuamente ortogonales:
 
-* **JPEG:** bloques $8 \\times 8$, se resta 128, DCT 2D, cuantización (se descartan altas frecuencias) y codificación.
-* **pHash:** imagen a $32 \\times 32$ en grises, DCT 2D, se toma el bloque $8 \\times 8$ de bajas frecuencias, se compara con la mediana y se obtiene un hash de 64 bits.
+
+
+&#x09;	$$\\sum\_{n=0}^{N-1} \\cos\\left\[\\frac{\\pi(2n+1)k}{2N}\\right] \\cos\\left\[\\frac{\\pi(2n+1)m}{2N}\\right] = 0 \\quad \\forall \\, k \\neq m$$
+
+
+
+2\. Normalización ($k = m$):
+
+Evaluando la norma al cuadrado de cada fila:
+
+Para $k = m = 0$: Como $\\cos(0) = 1$ y $\\epsilon\_0 = \\frac{1}{\\sqrt{2}}$, se obtiene:
+
+&#x09;	
+
+&#x09;	$$\\langle \\vec{\\psi}\_0, \\vec{\\psi}\_0 \\rangle = \\sum\_{n=0}^{N-1} \\left(\\sqrt{\\frac{2}{N}} \\cdot \\frac{1}{\\sqrt{2}} \\cdot 1\\right)^2 = \\sum\_{n=0}^{N-1} \\frac{1}{N} = 1$$
+
+
+
+Para $k = m > 0$: Aplicando la identidad trigonométrica $\\cos^2(\\theta) = \\frac{1 + \\cos(2\\theta)}{2}$ y $\\epsilon\_k = 1$:
+
+&#x09;
+
+&#x09;	$$\\langle \\vec{\\psi}\_k, \\vec{\\psi}\_k \\rangle = \\frac{2}{N} \\sum\_{n=0}^{N-1} \\cos^2\\left\[\\frac{\\pi(2n+1)k}{2N}\\right] = \\frac{1}{N} \\sum\_{n=0}^{N-1} \\left(1 + \\cos\\left\[\\frac{\\pi(2n+1)k}{N}\\right]\\right)$$
+
+
+
+Dado que la suma de una onda cosenoidal completa sobre un número entero de semiperiodos se anula ($\\sum\_{n=0}^{N-1} \\cos\\left\[\\frac{\\pi(2n+1)k}{N}\\right] = 0$ para $0 < k < N$), la expresión se reduce a:
+
+
+
+&#x09;		$$\\langle \\vec{\\psi}\_k, \\vec{\\psi}\_k \\rangle = \\frac{1}{N} (N + 0) = 1$$
+
+
+
+Queda demostrado que $C\_N^{II} (C\_N^{II})^T = I\_N$. En consecuencia, la matriz inversa de la DCT-II coincide exactamente con su matriz transpuesta, la cual define a la DCT Tipo III (DCT-III): 
+
+
+
+
+
+
+
+## 5\. Algoritmos Rápidos de Cálculo (Fast DCT-II)
+
+
+
+El cálculo directo de la transformada unidimensional $\\vec{c} = C\_N^{II} \\vec{x}$ mediante multiplicación matriz-vector convencional requiere $N^2$ multiplicaciones y $N(N-1)$ sumas. Para reducir esta complejidad computacional de $\\mathcal{O}(N^2)$ a $\\mathcal{O}(N \\log\_2 N)$ cuando $N = 2^m$, los algoritmos rápidos aprovechan la simetría par e impar de los vectores base:  
+
+
+
+&#x09;	$$\\Psi\_{k, N-1-n} = (-1)^k \\Psi\_{k, n}, \\quad n = 0, 1, \\dots, \\frac{N}{2}-1 
+
+
+
+Esta propiedad indica que las filas de índice par ($2k$) son simétricas respecto al centro del bloque, mientras que las filas de índice impar ($2k+1$) son antisimétricas.
+
+
+
+###### **5.1 Factorización Recursiva en Matrices Dispersas**
+
+Separando la sumatoria de la DCT-II (omitiendo temporalmente los factores de normalización) en coeficientes pares e impares, y agrupando los términos extremos de la señal de entrada $x\_n$ y $x\_{N-1-n}$, el cálculo de tamaño $N$ se divide en dos subproblemas independientes de tamaño $N/2$:
+
+
+
+Coeficientes de índice par ($2k$):
+
+
+
+&#x09;	$$c\_{2k}^{II} = \\sum\_{n=0}^{\\frac{N}{2}-1} (x\_n + x\_{N-1-n}) \\cos\\left\[\\frac{\\pi(2n+1)k}{2(N/2)}\\right], \\quad k = 0, 1, \\dots, \\frac{N}{2}-1 
+
+
+
+Esta expresión corresponde exactamente a una DCT-II de longitud $N/2$ aplicada sobre la suma de las muestras simétricas.
+
+
+
+Coeficientes de índice impar ($2k+1$):
+
+
+
+$$c\_{2k+1}^{II} = \\sum\_{n=0}^{\\frac{N}{2}-1} (x\_n - x\_{N-1-n}) \\cos\\left\[\\frac{\\pi(2n+1)(2k+1)}{4(N/2)}\\right], \\quad k = 0, 1, \\dots, \\frac{N}{2}-1 
+
+
+
+Esta expresión corresponde a una DCT Tipo IV (DCT-IV) de longitud $N/2$ aplicada sobre la diferencia de las muestras simétricas.
+
+
+
+En notación matricial, esta descomposición recursiva se expresa mediante el producto de matrices dispersas (sparse matrices).
+
+
+
+
+
+$$C\_N^{II} = P\_N \\begin{pmatrix} C\_{N/2}^{II} \& 0 \\\\ 0 \& J\_{N/2} C\_{N/2}^{IV} J\_{N/2} \\end{pmatrix} \\begin{pmatrix} I\_{N/2} \& J\_{N/2} \\\\ J\_{N/2} \& -I\_{N/2} \\end{pmatrix} 
+
+
+
+
+
+donde $I\_{N/2}$ es la matriz identidad, $J\_{N/2}$ es la matriz de reflexión antidiagonal (que invierte el orden de los elementos) y $P\_N$ es una matriz de permutación que reordena los coeficientes pares e impares.
+
+
+
+###### **5.2 Otras Estrategias Algorítmicas y Cota Óptima para $N=8$**
+
+
+
+Además de la factorización directa anterior (algoritmo de Chen), el desarrollo algorítmico permite implementar la DCT-II mediante tres enfoques alternativos de alta eficiencia:
+
+
+
+1. **Algoritmos Split-Radix:** Descomponen la DCT-II de $N$ puntos en una DCT-II de $N/2$, una DCT-II de $N/4$ y una DST-II de $N/4$, minimizando las operaciones redundantes.   
+2. **Cálculo vía Transformada de Walsh-Hadamard (WHT):** Dado que la WHT posee la misma estructura de simetría par/impar que la DCT-II, se aplica primero la WHT (que solo utiliza sumas y restas con elementos $\\pm 1$) y posteriormente una matriz de conversión dispersa por bloques con rotaciones de plano**.**  
+3. **Cálculo vía DFT Real (FFCT):** Reordena la secuencia de entrada para mapear la DCT-II sobre una Transformada Rápida de Fourier (FFT) real seguida de rotaciones angulares.   
+
+
+
+Para el caso estándar de $N = 8$, la cota teórica mínima de multiplicaciones no triviales está determinada por $\\mu(C\_N^{II}) = 2^{n+1} - n - 2$ con $N = 2^n$. Al factorizar los factores de escala $\\sqrt{2}$ hacia el final del proceso (DCT-II escalada, como en el algoritmo de Loeffler), se alcanza el mínimo teórico absoluto de 11 multiplicaciones y 29 sumas.
+
+
+
+## 6\. Extensión Bidimensional ($8 \\times 8$) y Aplicación a la Compresión Digital
+
+
+
+En el procesamiento de imágenes y codificación de video (estándares como JPEG, MPEG y H.264), los datos se procesan particionando la imagen en bloques bidimensionales de tamaño $N \\times N$, siendo $8 \\times 8$ píxeles el estándar universal.
+
+
+
+La elección de bloques de $8 \\times 8$ ($64$ píxeles) responde a un compromiso óptimo entre estadística de la señal y complejidad computacional:
+
+
+
+* **Potencia de dos ($N = 2^3$):** Permite aplicar tres niveles completos de descomposición recursiva de matrices dispersas hasta llegar a operaciones triviales de $2$ puntos.   
+
+
+
+* **Correlación espacial vs. Artefactos:** En bloques menores ($4 \\times 4$), la compactación de energía es insuficiente; en bloques mayores ($16 \\times 16$ o superiores), la presencia de bordes abruptos rompe la correlación local de Markov-1 entre píxeles distantes, introduciendo ruido alrededor de los contornos (ringing) e incrementando el costo aritmético.
+
+
+
+###### **6.1 Formulación Matricial y Producto de Kronecker**
+
+
+
+Gracias a la separabilidad del núcleo bidimensional de la DCT-II, la transformación de una matriz de píxeles $X \\in \\mathbb{R}^{8 \\times 8}$ en una matriz de coeficientes espectrales $Y \\in \\mathbb{R}^{8 \\times 8}$ se realiza aplicando la transformada 1-D primero sobre las filas y luego sobre las columnas: 
+
+
+
+&#x09;	$$Y = C\_8^{II} X (C\_8^{II})^T 
+
+
+
+Si se vectorizan las matrices $X$ e $Y$ por concatenación lexicográfica de sus filas, el operador bidimensional se expresa de forma compacta mediante el producto de Kronecker ($\\otimes$):
+
+
+
+&#x09;	$$\\text{vec}(Y) = (C\_8^{II} \\otimes C\_8^{II}) \\text{vec}(X) 
+
+
+
+Mientras el método directo requiere $64 \\times 64 = 4096$ multiplicaciones por bloque y el método convencional fila-columna requiere $16 \\times 11 = 176$ multiplicaciones, el enfoque estructural basado en la factorización del producto de Kronecker y rotaciones de Givens-Jacobi alcanza la cota teórica mínima de 88 multiplicaciones para todo el bloque $8 \\times 8$.
+
+
+
+**6.2 Proceso de Comprensión**
+
+
+
+### **Referencias**
+
+**\[1]** V. Britanak, P. C. Yip, and K. R. Rao, Discrete Cosine and Sine Transforms: General Properties, Fast Algorithms and Integer Approximations. Oxford, U.K.: Academic Press, 2007
+
+
+
+
+
+
+
+
 
