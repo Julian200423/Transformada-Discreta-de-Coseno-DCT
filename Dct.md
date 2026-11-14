@@ -142,7 +142,7 @@ El cálculo directo de la transformada unidimensional $\\vec{c} = C\_N^{II} \\ve
 
 
 
-&#x09;	$$\\Psi\_{k, N-1-n} = (-1)^k \\Psi\_{k, n}, \\quad n = 0, 1, \\dots, \\frac{N}{2}-1 
+&#x09;	$$\\Psi\_{k, N-1-n} = (-1)^k \\Psi\_{k, n}, \\quad n = 0, 1, \\dots, \\frac{N}{2}-1$$
 
 
 
@@ -150,7 +150,7 @@ Esta propiedad indica que las filas de índice par ($2k$) son simétricas respec
 
 
 
-###### **5.1 Factorización Recursiva en Matrices Dispersas**
+##### **5.1 Factorización Recursiva en Matrices Dispersas**
 
 Separando la sumatoria de la DCT-II (omitiendo temporalmente los factores de normalización) en coeficientes pares e impares, y agrupando los términos extremos de la señal de entrada $x\_n$ y $x\_{N-1-n}$, el cálculo de tamaño $N$ se divide en dos subproblemas independientes de tamaño $N/2$:
 
@@ -160,7 +160,7 @@ Coeficientes de índice par ($2k$):
 
 
 
-&#x09;	$$c\_{2k}^{II} = \\sum\_{n=0}^{\\frac{N}{2}-1} (x\_n + x\_{N-1-n}) \\cos\\left\[\\frac{\\pi(2n+1)k}{2(N/2)}\\right], \\quad k = 0, 1, \\dots, \\frac{N}{2}-1 
+&#x09;	$$c\_{2k}^{II} = \\sum\_{n=0}^{\\frac{N}{2}-1} (x\_n + x\_{N-1-n}) \\cos\\left\[\\frac{\\pi(2n+1)k}{2(N/2)}\\right], \\quad k = 0, 1, \\dots, \\frac{N}{2}-1$$
 
 
 
@@ -172,7 +172,7 @@ Coeficientes de índice impar ($2k+1$):
 
 
 
-$$c\_{2k+1}^{II} = \\sum\_{n=0}^{\\frac{N}{2}-1} (x\_n - x\_{N-1-n}) \\cos\\left\[\\frac{\\pi(2n+1)(2k+1)}{4(N/2)}\\right], \\quad k = 0, 1, \\dots, \\frac{N}{2}-1 
+$$c\_{2k+1}^{II} = \\sum\_{n=0}^{\\frac{N}{2}-1} (x\_n - x\_{N-1-n}) \\cos\\left\[\\frac{\\pi(2n+1)(2k+1)}{4(N/2)}\\right], \\quad k = 0, 1, \\dots, \\frac{N}{2}-1$$
 
 
 
@@ -186,7 +186,7 @@ En notación matricial, esta descomposición recursiva se expresa mediante el pr
 
 
 
-$$C\_N^{II} = P\_N \\begin{pmatrix} C\_{N/2}^{II} \& 0 \\\\ 0 \& J\_{N/2} C\_{N/2}^{IV} J\_{N/2} \\end{pmatrix} \\begin{pmatrix} I\_{N/2} \& J\_{N/2} \\\\ J\_{N/2} \& -I\_{N/2} \\end{pmatrix} 
+$$C\_N^{II} = P\_N \\begin{pmatrix} C\_{N/2}^{II} \& 0 \\\\ 0 \& J\_{N/2} C\_{N/2}^{IV} J\_{N/2} \\end{pmatrix} \\begin{pmatrix} I\_{N/2} \& J\_{N/2} \\\\ J\_{N/2} \& -I\_{N/2} \\end{pmatrix}$$
 
 
 
@@ -196,7 +196,7 @@ donde $I\_{N/2}$ es la matriz identidad, $J\_{N/2}$ es la matriz de reflexión a
 
 
 
-###### **5.2 Otras Estrategias Algorítmicas y Cota Óptima para $N=8$**
+##### **5.2 Otras Estrategias Algorítmicas y Cota Óptima para $N=8$**
 
 
 
@@ -234,7 +234,7 @@ La elección de bloques de $8 \\times 8$ ($64$ píxeles) responde a un compromis
 
 
 
-###### **6.1 Formulación Matricial y Producto de Kronecker**
+##### **6.1 Formulación Matricial y Producto de Kronecker**
 
 
 
@@ -242,7 +242,7 @@ Gracias a la separabilidad del núcleo bidimensional de la DCT-II, la transforma
 
 
 
-&#x09;	$$Y = C\_8^{II} X (C\_8^{II})^T 
+&#x09;	$$Y = C\_8^{II} X (C\_8^{II})^T$$
 
 
 
@@ -250,7 +250,7 @@ Si se vectorizan las matrices $X$ e $Y$ por concatenación lexicográfica de sus
 
 
 
-&#x09;	$$\\text{vec}(Y) = (C\_8^{II} \\otimes C\_8^{II}) \\text{vec}(X) 
+&#x09;	$$\\text{vec}(Y) = (C\_8^{II} \\otimes C\_8^{II}) \\text{vec}(X)$$
 
 
 
@@ -258,11 +258,11 @@ Mientras el método directo requiere $64 \\times 64 = 4096$ multiplicaciones por
 
 
 
-**6.2 Proceso de Comprensión**
+##### **6.2 Proceso de Comprensión**
 
 
 
-### **Referencias**
+## **7. Referencias y Bibliografía**
 
 **\[1]** V. Britanak, P. C. Yip, and K. R. Rao, Discrete Cosine and Sine Transforms: General Properties, Fast Algorithms and Integer Approximations. Oxford, U.K.: Academic Press, 2007
 
