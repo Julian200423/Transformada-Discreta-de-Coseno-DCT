@@ -4,9 +4,47 @@
 
 ## 1\. Introducción
 
-En el análisis de señales y el procesamiento digital de imágenes, las transformadas lineales cumplen el propósito fundamental de reducir la complejidad de un problema al proyectar los datos hacia un dominio alternativo donde sus componentes fundamentales resultan más fáciles de manipular. Si bien es frecuente asumir que la Transformada Discreta del Coseno (DCT) es simplemente una aproximación discreta de la Transformada Coseno de Fourier continua (FCT), dicha interpretación es matemáticamente imprecisa. Como demostró Gilbert Strang, la familia completa de transformadas trigonométricas discretas (DCT y DST) emerge de manera natural como las soluciones propias de un sistema físico discretizado: el oscilador armónico simple sometido a distintas combinaciones de condiciones de frontera homogéneas.   El presente informe desarrolla formalmente el origen diferencial y matricial de la DCT Tipo II (DCT-II), establece sus diferencias estructurales frente a otras transformadas ortogonales, demuestra su propiedad de ortonormalidad y expone las factorizaciones de matrices dispersas que permiten su cálculo rápido en bloques bidimensionales de $8 \\times 8$ para la compresión digital
+En el análisis de señales y el procesamiento digital de imágenes, las transformadas lineales cumplen el propósito fundamental de reducir la complejidad de un problema al proyectar los datos hacia un dominio alternativo donde sus
 
-## 2\. Definición
+componentes fundamentales resultan más fáciles de manipular. Si bien es frecuente asumir que la Transformada Discreta del Coseno (DCT) es simplemente una aproximación discreta de la Transformada Coseno de Fourier continua (FCT), dicha interpretación es matemáticamente imprecisa. Como demostró Gilbert Strang, la familia completa de transformadas trigonométricas discretas (DCT y DST) emerge de manera natural como las soluciones propias de un sistema físico discretizado: el oscilador armónico simple sometido a distintas combinaciones de condiciones de frontera homogéneas.   El presente informe desarrolla formalmente el origen diferencial y matricial de la DCT Tipo II (DCT-II), establece sus diferencias estructurales frente a otras transformadas ortogonales, demuestra su propiedad de ortonormalidad y expone las factorizaciones de matrices dispersas que permiten su cálculo rápido en bloques bidimensionales de $8 \\times 8$ para la compresión digital
+
+## 2\. Origen Fisico-Mátematico
+
+**Del oscilador Armónico a la Matriz A2.**
+
+Para deducir la DCT-II desde primeros principios, se parte del problema continuo de autovalores asociado al oscilador armónico simple no amortiguado en el dominio espacial $x \\in \[0, \\pi]$:
+
+
+
+&#x09;				$$\\frac{d^2u}{dx^2} + \\lambda u = 0 \\quad \\Longleftrightarrow \\quad u'' + \\lambda u = 0$$
+
+
+
+Al imponer condiciones de frontera homogéneas de Neumann (derivada nula en ambos extremos, $u'(0) = 0$ y $u'(\\pi) = 0$), las autofunciones del sistema continuo resultan ser los modos naturales de vibración $\\cos(kx)$ con autovalores $\\lambda = k^2$ para $k = 0, 1, 2, \\dots$.   Al trasladar este modelo al dominio discreto sobre una malla equiespaciada de $N$ puntos indexados por $l = 0, 1, \\dots, N-1$, la segunda derivada se aproxima mediante diferencias finitas centrales:
+
+&#x09;			$$-u\_{l-1} + 2u\_l - u\_{l+1} = \\lambda u\_l$$
+
+
+
+La distinción entre las ocho variantes de la DCT radica en el punto exacto donde se imponen las condiciones de frontera de simetría (Neumann) o antisimetría (Dirichlet). Específicamente, la DCT-II surge cuando las condiciones de frontera de Neumann se aplican en los puntos medios de la malla (mid-grid) en ambos extremos, es decir, en $l = -1/2$ y $l = N - 1/2$. Esto equivale a imponer una simetría de medio paso (Half-Sample Symmetric o HSHS) dada por $u\_{-1} = u\_0$ en el extremo izquierdo y $u\_N = u\_{N-1}$ en el extremo derecho.
+
+
+
+Al sustituir estas condiciones de borde en la ecuación en diferencias para $l = 0$ y $l = N-1$, el sistema de ecuaciones lineales se expresa en forma matricial como un problema de autovalores $A\_2 \\vec{u}\_k = \\lambda\_k \\vec{u}\_k$, donde $A\_2$ es una matriz tridiagonal simétrica de diferencias de segundo orden de orden $N \\times N$:
+
+
+
+$$A\_2 = \\begin{pmatrix} 1 \& -1 \& 0 \& \\cdots \& 0 \\\\ -1 \& 2 \& -1 \& \\cdots \& 0 \\\\ 0 \& -1 \& 2 \& \\ddots \& \\vdots \\\\ \\vdots \& \\vdots \& \\ddots \& 2 \& -1 \\\\ 0 \& 0 \& \\cdots \& -1 \& 1 \\end{pmatrix}$$
+
+
+
+Resolviendo este sistema algebraico, se verifica que los autovalores de $A\_2$ están dados por $\\lambda\_k = 2 - 2\\cos\\left(\\frac{k\\pi}{N}\\right)$ y que la $l$-ésima componente del $k$-ésimo autovector $\\vec{u}\_k$ corresponde exactamente al núcleo cosenoidal de la DCT-II:  
+
+
+
+&#x09;	 $$(u\_k)\_l = \\cos\\left\[\\left(l + \\frac{1}{2}\\right)\\frac{k\\pi}{N}\\right], \\quad l, k = 0, 1, \\dots, N-1$$
+
+
 
 A diferencia de la Transformada Discreta de Fourier (DFT), que utiliza senos y cosenos (números complejos),
 
