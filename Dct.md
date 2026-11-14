@@ -122,7 +122,15 @@ Para $k = m > 0$: Aplicando la identidad trigonométrica $\\cos^2(\\theta) = \\f
 
 
 
-Dado que la suma de una onda cosenoidal completa sobre un número entero de semiperiodos se anula ($\\sum\_{n=0}^{N-1} \\cos\\left\[\\frac{\\pi(2n+1)k}{N}\\right] = 0$ para $0 < k < N$), la expresión se reduce a:
+Dado que la suma de una onda cosenoidal completa sobre un número entero de semiperiodos se anula:
+
+
+
+&#x09;	$\\sum\_{n=0}^{N-1} \\cos\\left\[\\frac{\\pi(2n+1)k}{N}\\right] = 0$ 
+
+
+
+para $0 < k < N$), la expresión se reduce a:
 
 
 
